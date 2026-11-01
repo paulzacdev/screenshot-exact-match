@@ -44,11 +44,11 @@ export async function aiText(instructions: string, prompt: string, effort: "low"
 
 export async function transcribeAudio(bytes: Uint8Array, mime: string, lang?: string) {
   const apiKey = key();
-  const type = mime.startsWith("audio/") ? mime.split(";")[0] : "audio/webm";
+  const type: string = (mime.startsWith("audio/") ? mime.split(";")[0] : undefined) ?? "audio/webm";
   const ext = type.includes("mp4") ? "m4a" : type.includes("ogg") ? "ogg" : "webm";
   const form = new FormData();
   form.append("model", STT_MODEL);
-  form.append("file", new File([bytes], `chunk.${ext}`, { type }), `chunk.${ext}`);
+  form.append("file", new File([bytes as BlobPart], `chunk.${ext}`, { type }), `chunk.${ext}`);
   form.append("response_format", "json");
   form.append("stream", "true");
   form.append("languages", lang === "ar" ? "ar" : "fr");
