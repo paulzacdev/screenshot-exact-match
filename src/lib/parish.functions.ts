@@ -161,7 +161,7 @@ export const askHomily = createServerFn({ method: "POST" })
 /* ---------- Devices (admin) ---------- */
 
 function randomCode() {
-  const n = crypto.getRandomValues(new Uint32Array(1))[0] % 1_000_000;
+  const n = (crypto.getRandomValues(new Uint32Array(1))[0] ?? 0) % 1_000_000;
   return n.toString().padStart(6, "0");
 }
 

@@ -14,7 +14,7 @@ export type Lang = "fr" | "ar";
 export function pickSummary(raw: unknown, lang: Lang): Summary | null {
   if (!raw || typeof raw !== "object") return null;
   const r = raw as Record<string, unknown>;
-  if (r.fr || r.ar) return ((r[lang] ?? r.fr) as Summary) ?? null;
+  if (r["fr"] || r["ar"]) return ((r[lang] ?? r["fr"]) as Summary) ?? null;
   return r as unknown as Summary;
 }
 
