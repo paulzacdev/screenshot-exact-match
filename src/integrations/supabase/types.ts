@@ -14,16 +14,227 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_log: {
+        Row: {
+          action: string
+          actor: string
+          created_at: string
+          details: Json | null
+          id: string
+        }
+        Insert: {
+          action: string
+          actor: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+        }
+        Update: {
+          action?: string
+          actor?: string
+          created_at?: string
+          details?: Json | null
+          id?: string
+        }
+        Relationships: []
+      }
+      celebrations: {
+        Row: {
+          bible_refs: string[]
+          celebration_type: string
+          controller_device_id: string | null
+          controller_user_id: string | null
+          created_at: string
+          ended_at: string | null
+          id: string
+          source_lang: string
+          started_at: string
+          status: string
+          summary: Json | null
+          summary_status: string
+          title: string
+        }
+        Insert: {
+          bible_refs?: string[]
+          celebration_type?: string
+          controller_device_id?: string | null
+          controller_user_id?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          source_lang?: string
+          started_at?: string
+          status?: string
+          summary?: Json | null
+          summary_status?: string
+          title: string
+        }
+        Update: {
+          bible_refs?: string[]
+          celebration_type?: string
+          controller_device_id?: string | null
+          controller_user_id?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          source_lang?: string
+          started_at?: string
+          status?: string
+          summary?: Json | null
+          summary_status?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      devices: {
+        Row: {
+          can_control: boolean
+          can_transcribe: boolean
+          created_at: string
+          created_by: string | null
+          id: string
+          last_seen_at: string | null
+          name: string
+          paired_at: string | null
+          pairing_code_hash: string | null
+          pairing_expires_at: string | null
+          revoked_at: string | null
+          token_hash: string | null
+        }
+        Insert: {
+          can_control?: boolean
+          can_transcribe?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          last_seen_at?: string | null
+          name: string
+          paired_at?: string | null
+          pairing_code_hash?: string | null
+          pairing_expires_at?: string | null
+          revoked_at?: string | null
+          token_hash?: string | null
+        }
+        Update: {
+          can_control?: boolean
+          can_transcribe?: boolean
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          last_seen_at?: string | null
+          name?: string
+          paired_at?: string | null
+          pairing_code_hash?: string | null
+          pairing_expires_at?: string | null
+          revoked_at?: string | null
+          token_hash?: string | null
+        }
+        Relationships: []
+      }
+      events: {
+        Row: {
+          created_at: string
+          description: string | null
+          ends_at: string | null
+          id: string
+          kind: string
+          location: string | null
+          starts_at: string
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          kind?: string
+          location?: string | null
+          starts_at: string
+          title: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          ends_at?: string | null
+          id?: string
+          kind?: string
+          location?: string | null
+          starts_at?: string
+          title?: string
+        }
+        Relationships: []
+      }
+      segments: {
+        Row: {
+          celebration_id: string
+          created_at: string
+          id: string
+          seq: number
+          text: string
+          text_ar: string | null
+          text_fr: string | null
+        }
+        Insert: {
+          celebration_id: string
+          created_at?: string
+          id?: string
+          seq: number
+          text: string
+          text_ar?: string | null
+          text_fr?: string | null
+        }
+        Update: {
+          celebration_id?: string
+          created_at?: string
+          id?: string
+          seq?: number
+          text?: string
+          text_ar?: string | null
+          text_fr?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "segments_celebration_id_fkey"
+            columns: ["celebration_id"]
+            isOneToOne: false
+            referencedRelation: "celebrations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +361,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "user"],
+    },
   },
 } as const
