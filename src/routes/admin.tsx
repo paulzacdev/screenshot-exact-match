@@ -179,7 +179,7 @@ function Events() {
       <form className="grid gap-2 md:grid-cols-2" onSubmit={async (e) => {
         e.preventDefault();
         const { error } = await supabase.from("events").insert({ ...f, starts_at: new Date(f.starts_at).toISOString(), location: f.location || null, description: f.description || null });
-        if (error) return toast.error(error.message);
+        if (error) { toast.error(error.message); return; }
         setF({ ...f, title: "", description: "" }); qc.invalidateQueries({ queryKey: ["events"] });
       }}>
         <Input required placeholder="Titre" value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} />
