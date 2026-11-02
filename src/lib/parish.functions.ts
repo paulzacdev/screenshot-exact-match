@@ -214,3 +214,18 @@ export const revokeDevice = createServerFn({ method: "POST" })
     await audit(u.email ?? u.id, "device.revoke", { id: data.id });
     return { ok: true };
   });
+
+/** First signed-in account becomes admin when no admin exists yet. */
+export const claimFirstAdmin = createServerFn({ method: "POST" }).handler(async () => {
+  const { getRequestHeader } = await import("@tanstack/react-start/server");
+  const auth = getRequestHeader("authorization");
+  if (!auth?.startsWith("Bearer ")) throw new Error("Connexion requise");
+  const db = await admin();
+  const { data: u } = await db.auth.getUser(auth.slice(7));
+  if (!u.user) throw new Error("Connexion requise");
+  const { count } = await db.from("user_roles").select("id", { count: "exact", head: true }).eq("role", "admin");
+  if ((count ?? 0) > 0) return { ok: false };
+  await db.from("user_roles").insert({ user_id: u.user.id, role: "admin" });
+  await audit(u.user.email ?? u.user.id, "admin.bootstrap", {});
+  return { ok: true };
+});
