@@ -1,4 +1,4 @@
-
+import { Link } from "@tanstack/react-router";
 import { Home, Radio, Library, CalendarDays, Moon, Sun, Shield } from "lucide-react";
 import type { ReactNode } from "react";
 import { usePrefs } from "@/lib/prefs";
@@ -22,10 +22,10 @@ export function SiteShell({ children }: { children: ReactNode }) {
           </a>
           <nav className="hidden items-center gap-1 md:flex">
             {nav.map((n) => (
-              <a key={n.to} href={n.to}
+              <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/" }}
                 className="rounded-full px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground data-[status=active]:bg-secondary data-[status=active]:text-foreground">
                 {t(n.key)}
-              </a>
+              </Link>
             ))}
           </nav>
           <div className="flex items-center gap-1">
@@ -49,11 +49,11 @@ export function SiteShell({ children }: { children: ReactNode }) {
       <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-border/60 bg-background/95 backdrop-blur md:hidden">
         <div className="grid grid-cols-4">
           {nav.map((n) => (
-            <a key={n.to} href={n.to}
+            <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/" }}
               className="flex flex-col items-center gap-1 py-2.5 text-[11px] text-muted-foreground data-[status=active]:text-foreground">
               <n.icon className="h-5 w-5" strokeWidth={1.5} />
               {t(n.key)}
-            </a>
+            </Link>
           ))}
         </div>
       </nav>
