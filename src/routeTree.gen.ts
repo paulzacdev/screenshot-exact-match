@@ -10,33 +10,128 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AgendaRouteImport } from './routes/agenda'
+import { Route as AppareilRouteImport } from './routes/appareil'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as ConfidentialiteRouteImport } from './routes/confidentialite'
+import { Route as DirectRouteImport } from './routes/direct'
+import { Route as ArchivesIndexRouteImport } from './routes/archives.index'
+import { Route as ArchivesIdRouteImport } from './routes/archives.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AgendaRoute = AgendaRouteImport.update({
+  id: '/agenda',
+  path: '/agenda',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AppareilRoute = AppareilRouteImport.update({
+  id: '/appareil',
+  path: '/appareil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConfidentialiteRoute = ConfidentialiteRouteImport.update({
+  id: '/confidentialite',
+  path: '/confidentialite',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DirectRoute = DirectRouteImport.update({
+  id: '/direct',
+  path: '/direct',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArchivesIndexRoute = ArchivesIndexRouteImport.update({
+  id: '/archives/',
+  path: '/archives/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ArchivesIdRoute = ArchivesIdRouteImport.update({
+  id: '/archives/$id',
+  path: '/archives/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/appareil': typeof AppareilRoute
+  '/auth': typeof AuthRoute
+  '/confidentialite': typeof ConfidentialiteRoute
+  '/direct': typeof DirectRoute
+  '/archives/$id': typeof ArchivesIdRoute
+  '/archives/': typeof ArchivesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/appareil': typeof AppareilRoute
+  '/auth': typeof AuthRoute
+  '/confidentialite': typeof ConfidentialiteRoute
+  '/direct': typeof DirectRoute
+  '/archives/$id': typeof ArchivesIdRoute
+  '/archives': typeof ArchivesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/agenda': typeof AgendaRoute
+  '/appareil': typeof AppareilRoute
+  '/auth': typeof AuthRoute
+  '/confidentialite': typeof ConfidentialiteRoute
+  '/direct': typeof DirectRoute
+  '/archives/$id': typeof ArchivesIdRoute
+  '/archives/': typeof ArchivesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/agenda'
+    | '/appareil'
+    | '/auth'
+    | '/confidentialite'
+    | '/direct'
+    | '/archives/$id'
+    | '/archives/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/agenda'
+    | '/appareil'
+    | '/auth'
+    | '/confidentialite'
+    | '/direct'
+    | '/archives/$id'
+    | '/archives'
+  id:
+    | '__root__'
+    | '/'
+    | '/agenda'
+    | '/appareil'
+    | '/auth'
+    | '/confidentialite'
+    | '/direct'
+    | '/archives/$id'
+    | '/archives/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AgendaRoute: typeof AgendaRoute
+  AppareilRoute: typeof AppareilRoute
+  AuthRoute: typeof AuthRoute
+  ConfidentialiteRoute: typeof ConfidentialiteRoute
+  DirectRoute: typeof DirectRoute
+  ArchivesIdRoute: typeof ArchivesIdRoute
+  ArchivesIndexRoute: typeof ArchivesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +143,67 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/agenda': {
+      id: '/agenda'
+      path: '/agenda'
+      fullPath: '/agenda'
+      preLoaderRoute: typeof AgendaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/appareil': {
+      id: '/appareil'
+      path: '/appareil'
+      fullPath: '/appareil'
+      preLoaderRoute: typeof AppareilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/confidentialite': {
+      id: '/confidentialite'
+      path: '/confidentialite'
+      fullPath: '/confidentialite'
+      preLoaderRoute: typeof ConfidentialiteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/direct': {
+      id: '/direct'
+      path: '/direct'
+      fullPath: '/direct'
+      preLoaderRoute: typeof DirectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/archives/': {
+      id: '/archives/'
+      path: '/archives'
+      fullPath: '/archives/'
+      preLoaderRoute: typeof ArchivesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/archives/$id': {
+      id: '/archives/$id'
+      path: '/archives/$id'
+      fullPath: '/archives/$id'
+      preLoaderRoute: typeof ArchivesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AgendaRoute: AgendaRoute,
+  AppareilRoute: AppareilRoute,
+  AuthRoute: AuthRoute,
+  ConfidentialiteRoute: ConfidentialiteRoute,
+  DirectRoute: DirectRoute,
+  ArchivesIdRoute: ArchivesIdRoute,
+  ArchivesIndexRoute: ArchivesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
