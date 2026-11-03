@@ -35,7 +35,6 @@ export async function aiText(instructions: string, prompt: string, effort: "low"
       instructions,
       input: prompt,
       reasoning: { effort },
-      store: false,
     });
     return outText(r).trim();
   } catch (e) { friendly(e); }
