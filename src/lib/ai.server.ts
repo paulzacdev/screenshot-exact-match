@@ -1,16 +1,5 @@
-// Server-only AI helpers (Lovable AI Gateway). Never import from client code.
-import { createOpenAI } from "@ai-sdk/openai";
-import { streamText } from "ai";
-
-const BASE = "https://ai.gateway.lovable.dev/v1";
-const CHAT_MODEL = "openai/gpt-6-astra";
-const STT_MODEL = "openai/gpt-transcribe";
-
-function key() {
-  const k = process.env["LOVABLE_API_KEY"];
-  if (!k) throw new Error("Clé IA manquante (LOVABLE_API_KEY)");
-  return k;
-}
+// Server-only AI helpers (Lovable AI Gateway SDK). Never import from client code.
+import { generateResponse, transcribeAudio as gwTranscribe, GatewayError } from "@lovable.dev/ai-gateway";
 
 export class AiError extends Error {
   constructor(public status: number, message: string) {
@@ -18,73 +7,54 @@ export class AiError extends Error {
   }
 }
 
+function friendly(e: unknown): never {
+  if (e instanceof GatewayError) {
+    const s = e.httpStatus ?? 500;
+    if (s === 429) throw new AiError(s, "Trop de requêtes IA, réessayez dans un instant.");
+    if (s === 402) throw new AiError(s, "Crédits IA épuisés.");
+    throw new AiError(s, e.message || "Erreur du service IA");
+  }
+  throw e;
+}
+
+function outText(r: unknown): string {
+  const any = r as { output_text?: string; output?: Array<{ type: string; content?: Array<{ type: string; text?: string }> }> };
+  if (typeof any.output_text === "string" && any.output_text) return any.output_text;
+  return (any.output ?? [])
+    .filter((o) => o.type === "message")
+    .flatMap((o) => o.content ?? [])
+    .filter((c) => c.type === "output_text")
+    .map((c) => c.text ?? "")
+    .join("");
+}
+
 export async function aiText(instructions: string, prompt: string, effort: "low" | "medium" = "low") {
-  const apiKey = key();
-  const provider = createOpenAI({
-    baseURL: BASE,
-    apiKey,
-    headers: { "Lovable-API-Key": apiKey, "X-Lovable-AIG-SDK": "vercel-ai-sdk" },
-  });
-  const result = streamText({
-    model: provider.responses(CHAT_MODEL),
-    instructions,
-    messages: [{ role: "user", content: prompt }],
-    providerOptions: {
-      openai: {
-        store: false,
-        forceReasoning: true,
-        reasoningEffort: effort,
-        reasoningSummary: "auto",
-        include: ["reasoning.encrypted_content"],
-      },
-    },
-  });
-  return (await result.text).trim();
+  try {
+    const r = await generateResponse({
+      model: "openai/gpt-6-astra",
+      instructions,
+      input: prompt,
+      reasoning: { effort },
+      store: false,
+    });
+    return outText(r).trim();
+  } catch (e) { friendly(e); }
 }
 
 export async function transcribeAudio(bytes: Uint8Array, mime: string, lang?: string) {
-  const apiKey = key();
   const type: string = (mime.startsWith("audio/") ? mime.split(";")[0] : undefined) ?? "audio/webm";
   const ext = type.includes("mp4") ? "m4a" : type.includes("ogg") ? "ogg" : "webm";
-  const form = new FormData();
-  form.append("model", STT_MODEL);
-  form.append("file", new File([bytes as BlobPart], `chunk.${ext}`, { type }), `chunk.${ext}`);
-  form.append("response_format", "json");
-  form.append("stream", "true");
-  form.append("languages", lang === "ar" ? "ar" : "fr");
-  form.append("prompt", "Homélie catholique, paroisse d'Oran. Termes liturgiques et bibliques.");
-  const res = await fetch(`${BASE}/audio/transcriptions`, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}` },
-    body: form,
-  });
-  if (!res.ok || !res.body) {
-    const t = await res.text().catch(() => "");
-    let msg = t;
-    try { msg = JSON.parse(t)?.error?.message ?? JSON.parse(t)?.message ?? t; } catch { /* keep */ }
-    throw new AiError(res.status, msg || `Erreur transcription (${res.status})`);
-  }
-  const reader = res.body.getReader();
-  const dec = new TextDecoder();
-  let buf = "", deltas = "", done = "";
-  for (;;) {
-    const { value, done: end } = await reader.read();
-    if (end) break;
-    buf += dec.decode(value, { stream: true });
-    const lines = buf.split("\n");
-    buf = lines.pop() ?? "";
-    for (const line of lines) {
-      if (!line.startsWith("data:")) continue;
-      const payload = line.slice(5).trim();
-      if (!payload || payload === "[DONE]") continue;
-      try {
-        const ev = JSON.parse(payload);
-        if (ev.type === "transcript.text.delta") deltas += ev.delta ?? "";
-        if (ev.type === "transcript.text.done") done = ev.text ?? "";
-      } catch { /* ignore */ }
-    }
-  }
-  return (done || deltas).trim();
+  try {
+    const r = await gwTranscribe({
+      model: "openai/gpt-transcribe",
+      file: new File([bytes as BlobPart], `chunk.${ext}`, { type }),
+      response_format: "json",
+      language: lang === "ar" ? "ar" : "fr",
+      prompt: "Homélie catholique, paroisse d'Oran. Termes liturgiques et bibliques.",
+    });
+    const text = typeof r === "string" ? r : (r as { text?: string }).text ?? "";
+    return text.trim();
+  } catch (e) { friendly(e); }
 }
 
 export async function translate(text: string, target: "fr" | "ar") {
