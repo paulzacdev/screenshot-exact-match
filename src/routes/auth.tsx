@@ -29,6 +29,10 @@ function AuthPage() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (mode === "up" && email.trim().toLowerCase() !== "zacpaul437@gmail.com") {
+      toast.error("La création de compte est réservée aux administrateurs. Les fidèles n'ont pas besoin de compte.");
+      return;
+    }
     setBusy(true);
     const { error } = mode === "in"
       ? await supabase.auth.signInWithPassword({ email, password: pw })
@@ -42,6 +46,7 @@ function AuthPage() {
   return (
     <div className="mx-auto max-w-sm space-y-6 py-10">
       <h1 className="font-display text-4xl">{mode === "in" ? "Connexion" : "Créer un compte"}</h1>
+      <p className="text-sm text-muted-foreground">Espace réservé aux administrateurs. Les fidèles suivent le direct et les archives sans compte.</p>
       <form onSubmit={submit} className="space-y-3">
         <Input type="email" required placeholder="E-mail" value={email} onChange={(e) => setEmail(e.target.value)} />
         <Input type="password" required minLength={8} placeholder="Mot de passe" value={pw} onChange={(e) => setPw(e.target.value)} />
