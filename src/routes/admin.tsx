@@ -77,6 +77,13 @@ function Admin() {
           <Button variant="outline" onClick={signOut}>Déconnexion</Button>
         </div>
       </header>
+      <Link to="/enregistrer" className="flex items-center justify-between gap-4 rounded-2xl border border-gold bg-card p-6 transition-colors hover:bg-secondary">
+        <div>
+          <p className="font-display text-2xl">Activer la transcription</p>
+          <p className="text-sm text-muted-foreground">Démarrer l'enregistrement et la traduction en direct de la célébration.</p>
+        </div>
+        <span className="rounded-full bg-primary px-5 py-3 text-sm font-medium text-primary-foreground">● Démarrer</span>
+      </Link>
       <Tabs defaultValue="devices">
         <TabsList>
           <TabsTrigger value="devices">Appareils</TabsTrigger>
