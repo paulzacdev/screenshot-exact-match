@@ -4,6 +4,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { activeCelebrationQuery } from "@/lib/queries";
 import { usePrefs } from "@/lib/prefs";
+import { Radio } from "lucide-react";
+import olive from "@/assets/olive-branch.png";
 import { TranscriptLive } from "@/components/TranscriptLive";
 
 export const Route = createFileRoute("/direct")({
@@ -35,22 +37,26 @@ function Direct() {
 
   if (isLoading) return null;
   if (!active) return (
-    <div className="py-20 text-center space-y-4">
-      <p className="font-display text-3xl">{t("noLive")}</p>
-      <Link to="/archives" className="text-sm underline underline-offset-4">{t("archives")}</Link>
+    <div className="card-art relative mx-auto mt-6 max-w-xl overflow-hidden px-6 py-16 text-center space-y-5">
+      <img src={olive} alt="" className="pointer-events-none absolute -end-10 -top-4 w-48 opacity-50" />
+      <span className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-gold/25"><Radio className="h-7 w-7" /></span>
+      <p className="font-display text-4xl">{t("noLive")}</p>
+      <p className="font-display text-lg italic text-muted-foreground">L'homélie est transcrite ici chaque vendredi.</p>
+      <Link to="/archives" className="inline-flex rounded-full bg-primary px-5 py-2.5 text-sm text-primary-foreground">{t("archives")}</Link>
     </div>
   );
   return (
     <article className="mx-auto max-w-2xl space-y-8">
-      <header className="space-y-2">
-        <p className="flex items-center gap-2 text-sm text-live">
-          <span className={`h-2 w-2 rounded-full bg-live ${active.status === "live" ? "animate-pulse" : ""}`} />
+      <header className="space-y-3">
+        <p className="chip-gold text-live">
+          <span className={active.status === "live" ? "live-dot" : "h-2 w-2 rounded-full bg-live"} />
           {active.status === "paused" ? t("paused") : t("liveNow")}
         </p>
-        <h1 className="font-display text-4xl">{active.title}</h1>
-        <p className="text-muted-foreground">{active.celebration_type}</p>
+        <div className="gold-rule w-16" />
+        <h1 className="font-display text-5xl font-semibold leading-tight">{active.title}</h1>
+        <p className="font-display text-xl italic text-muted-foreground">{active.celebration_type}</p>
       </header>
-      <TranscriptLive celebrationId={active.id} live sourceLang={active.source_lang} />
+      <div className="card-art p-6 md:p-10"><TranscriptLive celebrationId={active.id} live sourceLang={active.source_lang} /></div>
     </article>
   );
 }
