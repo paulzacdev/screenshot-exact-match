@@ -34,20 +34,23 @@ function Index() {
   return (
     <div className="space-y-14">
       {/* Hero */}
-      <section className="relative -mx-5 -mt-6 min-h-[560px] overflow-hidden md:-mt-10 md:min-h-[520px]">
-        <img src={church} alt="" width={1024} height={1280}
-          className="absolute inset-y-0 end-0 h-full w-[78%] object-cover object-left opacity-95 md:w-[55%] [mask-image:linear-gradient(to_left,black_55%,transparent),linear-gradient(to_top,transparent,black_25%)] [mask-composite:intersect] rtl:-scale-x-100" />
-        <div className="relative z-10 max-w-md space-y-5 px-5 pt-10 md:pt-16">
+      <section className="relative -mx-5 -mt-6 overflow-hidden pb-16 md:-mt-10 md:grid md:min-h-[520px] md:grid-cols-2 md:items-center">
+        {/* Image: banner on mobile, side panel on desktop — never behind the text */}
+        <div className="relative h-60 md:order-2 md:h-full md:min-h-[520px]">
+          <img src={church} alt="" width={1024} height={1280}
+            className="absolute inset-0 h-full w-full object-cover object-[center_30%] [mask-image:linear-gradient(to_bottom,black_60%,transparent)] md:[mask-image:linear-gradient(to_right,transparent,black_35%)] rtl:md:[mask-image:linear-gradient(to_left,transparent,black_35%)] rtl:-scale-x-100" />
+        </div>
+        <div className="relative z-10 -mt-6 space-y-5 px-5 md:mt-0 md:max-w-md md:py-16">
           <span className="chip-gold">{t("welcome")}</span>
           <div className="gold-rule w-20" />
-          <h1 className="font-display text-[3.4rem] font-semibold leading-[0.98] md:text-7xl">
+          <h1 className="font-display text-[3rem] font-bold leading-[1] text-primary md:text-7xl">
             {ar ? "كلمة الله،" : "La Parole,"}
-            <span className="mt-1 block text-[2.4rem] font-normal italic leading-[1.05] md:text-5xl">
+            <span className="mt-2 block text-[2.1rem] font-semibold italic leading-[1.1] text-primary/90 md:text-5xl">
               {ar ? "مباشرة وبلغتك" : "en direct et dans votre langue"}
             </span>
           </h1>
           <svg viewBox="0 0 220 10" className="h-2.5 w-44 text-gold" aria-hidden><path d="M2 8 C 60 0, 150 0, 218 5" stroke="currentColor" strokeWidth="3" strokeLinecap="round" fill="none" /></svg>
-          <p className="max-w-[16rem] font-display text-xl italic leading-snug text-foreground/85">
+          <p className="max-w-sm font-display text-[1.3rem] font-medium italic leading-snug text-foreground">
             <span className="text-gold">« </span>
             {ar ? "تابع عظة الجمعة نصاً مباشراً بالعربية أو الفرنسية، ثم اقرأ ملخصها." : "Suivez l'homélie du vendredi en texte, en français ou en arabe, puis relisez son résumé."}
             <span className="text-gold"> »</span>
