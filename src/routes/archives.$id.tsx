@@ -5,6 +5,7 @@ import { celebrationQuery } from "@/lib/queries";
 import { usePrefs, fmtDate } from "@/lib/prefs";
 import { SummaryView } from "@/components/SummaryView";
 import { TranscriptLive } from "@/components/TranscriptLive";
+import { PageState } from "@/components/PageState";
 
 export const Route = createFileRoute("/archives/$id")({
   head: () => ({
@@ -23,9 +24,10 @@ export const Route = createFileRoute("/archives/$id")({
 function Detail() {
   const { id } = Route.useParams();
   const { t, lang } = usePrefs();
-  const { data: c, isLoading } = useQuery(celebrationQuery(id));
+  const { data: c, isLoading, isError, refetch } = useQuery(celebrationQuery(id));
   const [tab, setTab] = useState<"summary" | "transcript">("summary");
-  if (isLoading) return null;
+  if (isLoading) return <PageState />;
+  if (isError) return <PageState error retry={() => { void refetch(); }} />;
   if (!c) return <p className="py-20 text-center">Introuvable. <Link to="/archives" className="underline">{t("archives")}</Link></p>;
   return (
     <article className="mx-auto max-w-2xl space-y-8">

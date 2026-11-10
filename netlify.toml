@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Nitro generates .netlify/v1/functions and routing automatically.
+# Do not add a /* -> /index.html SPA redirect: this app needs server rendering.

@@ -4,6 +4,7 @@ import { MapPin, Clock } from "lucide-react";
 import { eventsQuery } from "@/lib/queries";
 import { usePrefs, fmtDate } from "@/lib/prefs";
 import { PageHeader } from "@/components/Ornament";
+import { PageState } from "@/components/PageState";
 
 export const Route = createFileRoute("/agenda")({
   head: () => ({
@@ -21,11 +22,12 @@ export const Route = createFileRoute("/agenda")({
 
 function Agenda() {
   const { t, lang } = usePrefs();
-  const { data = [] } = useQuery(eventsQuery);
+  const { data = [], isLoading, isError, refetch } = useQuery(eventsQuery);
   const list = data.filter((e) => new Date(e.ends_at ?? e.starts_at) >= new Date(Date.now() - 86400000));
   return (
     <div className="space-y-10">
       <PageHeader eyebrow={t("agenda")} title={lang === "ar" ? "عظات الجمعة" : "Homélies"} italic={lang === "ar" ? "كل يوم جمعة" : "chaque vendredi"} />
+      {isLoading ? <PageState /> : isError ? <PageState error retry={() => { void refetch(); }} /> : null}
       <ol className="relative space-y-5 border-s border-gold/50 ps-6">
         {list.map((e) => (
           <li key={e.id} className="relative">

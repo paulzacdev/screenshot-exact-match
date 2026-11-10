@@ -7,6 +7,7 @@ import { usePrefs, fmtDate } from "@/lib/prefs";
 import { pickSummary } from "@/lib/types";
 import { PageHeader } from "@/components/Ornament";
 import bible from "@/assets/bible-candle.jpg";
+import { PageState } from "@/components/PageState";
 
 export const Route = createFileRoute("/archives/")({
   head: () => ({
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/archives/")({
 
 function Archives() {
   const { t, lang } = usePrefs();
-  const { data = [] } = useQuery(archivesQuery);
+  const { data = [], isLoading, isError, refetch } = useQuery(archivesQuery);
   const [q, setQ] = useState("");
   const n = q.trim().toLowerCase();
   const list = data.filter((c) => !n || [c.title, c.celebration_type, ...(c.bible_refs ?? []), JSON.stringify(c.summary ?? "")].join(" ").toLowerCase().includes(n));
@@ -32,6 +33,7 @@ function Archives() {
   return (
     <div className="space-y-8">
       <PageHeader eyebrow={t("archives")} title={lang === "ar" ? "العظات" : "Les homélies"} italic={lang === "ar" ? "للقراءة من جديد" : "à relire et méditer"} />
+      {isLoading ? <PageState /> : isError ? <PageState error retry={() => { void refetch(); }} /> : null}
       <label className="card-art flex items-center gap-3 rounded-full px-5 py-3">
         <Search className="h-4 w-4 shrink-0 text-gold" />
         <input value={q} onChange={(e) => setQ(e.target.value)} placeholder={t("search")} className="w-full bg-transparent font-display text-lg italic outline-none placeholder:text-muted-foreground" />

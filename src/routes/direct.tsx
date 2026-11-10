@@ -7,6 +7,7 @@ import { usePrefs } from "@/lib/prefs";
 import { Radio } from "lucide-react";
 import olive from "@/assets/olive-branch.png";
 import { TranscriptLive } from "@/components/TranscriptLive";
+import { PageState } from "@/components/PageState";
 
 export const Route = createFileRoute("/direct")({
   head: () => ({
@@ -25,7 +26,7 @@ export const Route = createFileRoute("/direct")({
 function Direct() {
   const { t } = usePrefs();
   const qc = useQueryClient();
-  const { data: active, isLoading } = useQuery(activeCelebrationQuery);
+  const { data: active, isLoading, isError, refetch } = useQuery(activeCelebrationQuery);
 
   useEffect(() => {
     const ch = supabase.channel(`cel-${Math.random().toString(36).slice(2)}`)
@@ -35,7 +36,8 @@ function Direct() {
     return () => { supabase.removeChannel(ch); clearInterval(iv); };
   }, [qc]);
 
-  if (isLoading) return null;
+  if (isLoading) return <PageState />;
+  if (isError) return <PageState error retry={() => { void refetch(); }} />;
   if (!active) return (
     <div className="card-art relative mx-auto mt-6 max-w-xl overflow-hidden px-6 py-16 text-center space-y-5">
       <img src={olive} alt="" className="pointer-events-none absolute -end-10 -top-4 w-48 opacity-50" />

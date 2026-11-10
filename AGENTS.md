@@ -10,3 +10,5 @@
 <!-- LOVABLE:END -->
 
 - Keep AI fidelity instructions and the summary instruction constant in the server-only AI helper so transcription, translation, and summary requests remain testable without exposing prompts in browser code.
+- Select Nitro's Netlify preset only in the Netlify build environment; preserve the managed Lovable target and let Nitro generate server-function routing rather than adding a static SPA fallback.
+- Use visible pending and retry states for public content requests, keeping server-rendering error HTML independent of JavaScript so failures do not leave an empty page.

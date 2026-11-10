@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 export const activeCelebrationQuery = queryOptions({
   queryKey: ["celebration", "active"],
   queryFn: async () => {
-    const { data } = await supabase.from("celebrations").select("*").in("status", ["live", "paused"]).maybeSingle();
+    const { data, error } = await supabase.from("celebrations").select("*").in("status", ["live", "paused"]).maybeSingle();
+    if (error) throw error;
     return data;
   },
 });
