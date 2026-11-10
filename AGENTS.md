@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Keep AI fidelity instructions and the summary instruction constant in the server-only AI helper so transcription, translation, and summary requests remain testable without exposing prompts in browser code.

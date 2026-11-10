@@ -1,6 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireController, requireAdmin, admin, audit, sha256, type Controller } from "./control.server";
-import { aiText, transcribeAudio, translate, extractJson } from "./ai.server";
+import { aiText, transcribeAudio, translate, extractJson, SUMMARY_INSTRUCTIONS } from "./ai.server";
 import type { Summary } from "./types";
 
 type Tok = { deviceToken?: string | null };
@@ -104,10 +104,7 @@ async function generateSummary(id: string) {
   }
   try {
     const raw = await aiText(
-      `Tu es un assistant pastoral. À partir UNIQUEMENT de la transcription d'homélie fournie, produis un résumé pédagogique fidèle.
-Règles strictes : n'invente AUCUNE référence biblique, citation ou enseignement absent du texte. Les références ne doivent figurer que si elles sont explicitement mentionnées. Signale dans "uncertain" les passages peu clairs ou mal transcrits.
-Réponds en JSON strict, sans texte autour, de la forme :
-{"fr":{"central":"","points":[],"refs":[],"teachings":[],"applications":[],"conclusion":"","uncertain":[]},"ar":{...même structure traduite en arabe...}}`,
+      SUMMARY_INSTRUCTIONS,
       transcript.slice(0, 60000),
       "medium",
     );
