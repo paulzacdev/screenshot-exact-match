@@ -37,17 +37,19 @@ function useAdminState() {
       const { data } = await supabase.from("user_roles").select("id").eq("user_id", user.id).eq("role", "admin").maybeSingle();
       return { user, isAdmin: !!data };
     },
+    staleTime: 0,
+    refetchOnMount: "always",
   });
 }
 
 function Admin() {
   const nav = useNavigate();
   const qc = useQueryClient();
-  const { data, isLoading } = useAdminState();
+  const { data, isLoading, isFetching } = useAdminState();
   const claim = useServerFn(claimFirstAdmin);
 
-  useEffect(() => { if (!isLoading && !data?.user) nav({ to: "/auth", replace: true }); }, [isLoading, data, nav]);
-  if (isLoading || !data?.user) return <Loader2 className="mx-auto mt-20 h-6 w-6 animate-spin" />;
+  useEffect(() => { if (!isLoading && !isFetching && !data?.user) nav({ to: "/auth", replace: true }); }, [isLoading, isFetching, data, nav]);
+  if (isLoading || (isFetching && !data?.user) || !data?.user) return <Loader2 className="mx-auto mt-20 h-6 w-6 animate-spin" />;
 
   async function signOut() {
     await qc.cancelQueries(); qc.clear();

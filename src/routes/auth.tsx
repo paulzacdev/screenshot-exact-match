@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ export const Route = createFileRoute("/auth")({
 
 function AuthPage() {
   const nav = useNavigate();
+  const qc = useQueryClient();
   const [mode, setMode] = useState<"in" | "up">("in");
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
@@ -34,12 +36,13 @@ function AuthPage() {
       return;
     }
     setBusy(true);
-    const { error } = mode === "in"
+    const { data, error } = mode === "in"
       ? await supabase.auth.signInWithPassword({ email, password: pw })
       : await supabase.auth.signUp({ email, password: pw, options: { emailRedirectTo: `${window.location.origin}/admin` } });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
-    if (mode === "up") { toast.success("Vérifiez votre e-mail pour confirmer le compte."); return; }
+    qc.removeQueries({ queryKey: ["me"] });
+    if (mode === "up" && !data.session) { toast.success("Vérifiez votre e-mail pour confirmer le compte."); return; }
     nav({ to: "/admin" });
   }
 
